@@ -1,0 +1,41 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "nginx-ovs"
+  namespace: "default"
+  labels:
+    app: "nginx-ovs"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "nginx-ovs"
+  template:
+    metadata:
+      labels:
+        app: "nginx-ovs"
+    spec:
+      containers:
+      - name: "onlinesale-sha256-1"
+        image: "gcr.io/charged-ground-326209/github.com/tanu02950/onlinesale@sha256:bf096c2dee9d24c260039717907008b786d5e101a6d7a67a60355b1ade78338b"
+---
+apiVersion: "autoscaling/v2beta1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "nginx-ovs-hpa-xqwe"
+  namespace: "default"
+  labels:
+    app: "nginx-ovs"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "nginx-ovs"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: "Resource"
+    resource:
+      name: "cpu"
+      targetAverageUtilization: 80
